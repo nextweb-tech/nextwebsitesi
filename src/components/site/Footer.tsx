@@ -13,7 +13,6 @@ export function Footer({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => void }
         <div className="grid gap-10 border-b border-white/10 pb-12 lg:grid-cols-[1.2fr_1fr_1fr]">
           <div>
             <Logo tone="light" />
-            <p className="mt-6 max-w-sm text-sm leading-relaxed">{t.footer.about}</p>
           </div>
 
           <div>
