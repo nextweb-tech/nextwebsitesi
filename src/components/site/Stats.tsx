@@ -100,10 +100,6 @@ export function Stats() {
       </div>
     </section>
   );
-
-      </div>
-    </section>
-  );
 }
 
 const sketchProps = {
