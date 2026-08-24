@@ -1,3 +1,4 @@
+import aboutImage from "@/assets/about-architect.jpg";
 import { useI18n } from "@/lib/i18n";
 
 export function About() {
@@ -12,6 +13,16 @@ export function About() {
           <h2 className="mt-4 text-3xl leading-tight text-white sm:text-4xl">
             {t.about.titleLead} <span className="text-brand-gradient">{t.about.titleAccent}</span>
           </h2>
+          <div className="mt-8 overflow-hidden border border-white/10">
+            <img
+              src={aboutImage}
+              alt={t.about.titleAccent}
+              loading="lazy"
+              width={1280}
+              height={960}
+              className="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105"
+            />
+          </div>
         </div>
         <div className="space-y-5 text-base leading-relaxed text-white/70">
           {t.about.paragraphs.map((paragraph) => (
