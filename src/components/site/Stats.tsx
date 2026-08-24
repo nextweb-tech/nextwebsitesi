@@ -28,7 +28,17 @@ function useCountUp(target: number, run: boolean) {
   return value;
 }
 
-function StatCard({ stat, run }: { stat: (typeof STATS)[number]; run: boolean }) {
+function StatCard({
+  stat,
+  copy,
+  locale,
+  run,
+}: {
+  stat: (typeof STATS)[number];
+  copy: { label: string; text: string };
+  locale: string;
+  run: boolean;
+}) {
   const value = useCountUp(stat.value, run);
   return (
     <article className="group relative overflow-hidden border border-border bg-card p-8 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-elevated)]">
@@ -37,17 +47,18 @@ function StatCard({ stat, run }: { stat: (typeof STATS)[number]; run: boolean })
       </div>
       <div className="relative">
         <div className="text-4xl font-bold tracking-tight text-navy sm:text-5xl">
-          {value.toLocaleString("tr-TR")}
+          {value.toLocaleString(locale)}
           <span className="text-primary">{stat.suffix}</span>
         </div>
         <h3 className="mt-3 text-sm font-bold tracking-[0.14em] text-navy uppercase">
-          {stat.label}
+          {copy.label}
         </h3>
-        <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{stat.text}</p>
+        <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{copy.text}</p>
       </div>
     </article>
   );
 }
+
 
 export function Stats() {
   const ref = useRef<HTMLDivElement>(null);
