@@ -61,6 +61,7 @@ function StatCard({
 
 
 export function Stats() {
+  const { t, lang } = useI18n();
   const ref = useRef<HTMLDivElement>(null);
   const [run, setRun] = useState(false);
 
@@ -83,15 +84,23 @@ export function Stats() {
   return (
     <section id="cozumler" className="border-b border-border bg-background py-20 sm:py-28">
       <div ref={ref} className="mx-auto max-w-7xl px-5 sm:px-8">
-        <p className="eyebrow">Sektördeki Ölçeğimiz</p>
-        <h2 className="mt-4 max-w-2xl text-3xl text-navy sm:text-4xl">
-          Rakamlar, sahada kanıtlanmış bir operasyonun özetidir.
-        </h2>
+        <p className="eyebrow">{t.stats.eyebrow}</p>
+        <h2 className="mt-4 max-w-2xl text-3xl text-navy sm:text-4xl">{t.stats.title}</h2>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {STATS.map((stat) => (
-            <StatCard key={stat.label} stat={stat} run={run} />
+          {STATS.map((stat, index) => (
+            <StatCard
+              key={stat.value}
+              stat={stat}
+              copy={t.stats.items[index]!}
+              locale={lang === "tr" ? "tr-TR" : "en-US"}
+              run={run}
+            />
           ))}
         </div>
+      </div>
+    </section>
+  );
+
       </div>
     </section>
   );
