@@ -1,28 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
+import { useI18n } from "@/lib/i18n";
+
 const STATS = [
-  {
-    value: 1_250_000,
-    suffix: "+",
-    label: "Kayıt & Check-in",
-    text: "Kongre, zirve ve bayi buluşmalarında sistemlerimiz üzerinden tamamlanan katılımcı kaydı.",
-    sketch: <SketchBadge />,
-  },
-  {
-    value: 25_000,
-    suffix: "",
-    label: "Tek Etkinlikte Katılımcı",
-    text: "5 kişilik yönetim toplantısından 25.000 kişilik organizasyona kadar aynı altyapı, aynı istikrar.",
-    sketch: <SketchHall />,
-  },
-  {
-    value: 180_000,
-    suffix: "+",
-    label: "Konaklama & Transfer Hareketi",
-    text: "Oda blokajı, rooming list, uçuş eşleştirme ve transfer planlaması dijital olarak yönetildi.",
-    sketch: <SketchRoute />,
-  },
+  { value: 1_250_000, suffix: "+", sketch: <SketchBadge /> },
+  { value: 25_000, suffix: "", sketch: <SketchHall /> },
+  { value: 180_000, suffix: "+", sketch: <SketchRoute /> },
 ];
+
 
 function useCountUp(target: number, run: boolean) {
   const [value, setValue] = useState(0);
