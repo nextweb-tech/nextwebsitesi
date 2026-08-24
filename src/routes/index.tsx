@@ -1,24 +1,50 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { About } from "@/components/site/About";
+import { Footer } from "@/components/site/Footer";
+import { Header } from "@/components/site/Header";
+import { HeroSlider } from "@/components/site/HeroSlider";
+import { LegalDialog, type LegalKey } from "@/components/site/LegalDialog";
+import { Products } from "@/components/site/Products";
+import { QuoteForm } from "@/components/site/QuoteForm";
+import { Stats } from "@/components/site/Stats";
+import { WhyUs } from "@/components/site/WhyUs";
+
+const TITLE = "NEXT | Etkinlikler İçin Kayıt, Konaklama ve Transfer Yazılımları";
+const DESCRIPTION =
+  "NEXT, kongre, bayi toplantısı ve kurumsal etkinlikler için kayıt, LCV, konaklama, ulaşım, transfer, mobil uygulama ve web sitesi çözümleri geliştirir.";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const [legal, setLegal] = useState<LegalKey>(null);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main>
+        <HeroSlider />
+        <Stats />
+        <About />
+        <Products />
+        <WhyUs />
+        <QuoteForm onOpenLegal={setLegal} />
+      </main>
+      <Footer onOpenLegal={setLegal} />
+      <LegalDialog active={legal} onClose={() => setLegal(null)} />
     </div>
   );
 }
