@@ -1,28 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
+import { useI18n } from "@/lib/i18n";
+
 const STATS = [
-  {
-    value: 1_250_000,
-    suffix: "+",
-    label: "Kayıt & Check-in",
-    text: "Kongre, zirve ve bayi buluşmalarında sistemlerimiz üzerinden tamamlanan katılımcı kaydı.",
-    sketch: <SketchBadge />,
-  },
-  {
-    value: 25_000,
-    suffix: "",
-    label: "Tek Etkinlikte Katılımcı",
-    text: "5 kişilik yönetim toplantısından 25.000 kişilik organizasyona kadar aynı altyapı, aynı istikrar.",
-    sketch: <SketchHall />,
-  },
-  {
-    value: 180_000,
-    suffix: "+",
-    label: "Konaklama & Transfer Hareketi",
-    text: "Oda blokajı, rooming list, uçuş eşleştirme ve transfer planlaması dijital olarak yönetildi.",
-    sketch: <SketchRoute />,
-  },
+  { value: 1_250_000, suffix: "+", sketch: <SketchBadge /> },
+  { value: 25_000, suffix: "", sketch: <SketchHall /> },
+  { value: 180_000, suffix: "+", sketch: <SketchRoute /> },
 ];
+
 
 function useCountUp(target: number, run: boolean) {
   const [value, setValue] = useState(0);
@@ -43,7 +28,17 @@ function useCountUp(target: number, run: boolean) {
   return value;
 }
 
-function StatCard({ stat, run }: { stat: (typeof STATS)[number]; run: boolean }) {
+function StatCard({
+  stat,
+  copy,
+  locale,
+  run,
+}: {
+  stat: (typeof STATS)[number];
+  copy: { label: string; text: string };
+  locale: string;
+  run: boolean;
+}) {
   const value = useCountUp(stat.value, run);
   return (
     <article className="group relative overflow-hidden border border-border bg-card p-8 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[var(--shadow-elevated)]">
@@ -52,19 +47,21 @@ function StatCard({ stat, run }: { stat: (typeof STATS)[number]; run: boolean })
       </div>
       <div className="relative">
         <div className="text-4xl font-bold tracking-tight text-navy sm:text-5xl">
-          {value.toLocaleString("tr-TR")}
+          {value.toLocaleString(locale)}
           <span className="text-primary">{stat.suffix}</span>
         </div>
         <h3 className="mt-3 text-sm font-bold tracking-[0.14em] text-navy uppercase">
-          {stat.label}
+          {copy.label}
         </h3>
-        <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{stat.text}</p>
+        <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{copy.text}</p>
       </div>
     </article>
   );
 }
 
+
 export function Stats() {
+  const { t, lang } = useI18n();
   const ref = useRef<HTMLDivElement>(null);
   const [run, setRun] = useState(false);
 
@@ -87,13 +84,17 @@ export function Stats() {
   return (
     <section id="cozumler" className="border-b border-border bg-background py-20 sm:py-28">
       <div ref={ref} className="mx-auto max-w-7xl px-5 sm:px-8">
-        <p className="eyebrow">Sektördeki Ölçeğimiz</p>
-        <h2 className="mt-4 max-w-2xl text-3xl text-navy sm:text-4xl">
-          Rakamlar, sahada kanıtlanmış bir operasyonun özetidir.
-        </h2>
+        <p className="eyebrow">{t.stats.eyebrow}</p>
+        <h2 className="mt-4 max-w-2xl text-3xl text-navy sm:text-4xl">{t.stats.title}</h2>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {STATS.map((stat) => (
-            <StatCard key={stat.label} stat={stat} run={run} />
+          {STATS.map((stat, index) => (
+            <StatCard
+              key={stat.value}
+              stat={stat}
+              copy={t.stats.items[index]!}
+              locale={lang === "tr" ? "tr-TR" : "en-US"}
+              run={run}
+            />
           ))}
         </div>
       </div>

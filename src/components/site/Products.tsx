@@ -2,46 +2,22 @@ import registration from "@/assets/product-registration.jpg";
 import accommodation from "@/assets/product-accommodation.jpg";
 import transfer from "@/assets/product-transfer.jpg";
 import app from "@/assets/product-app.jpg";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-const PRODUCTS = [
-  {
-    image: registration,
-    title: "Kayıt & LCV Yönetimi",
-    text: "Davetiye gönderiminden LCV takibine, kotalı kayıt formlarından QR'lı yaka kartı ve hızlı check-in ekranlarına kadar tüm katılımcı yolculuğu tek panelden yönetilir. Katılım durumu anlık raporlanır, davet listesi tekrar tekrar temizlenmek zorunda kalmaz.",
-    points: ["Çok dilli kayıt formları", "QR check-in ve yaka kartı", "Anlık katılım raporları"],
-  },
-  {
-    image: accommodation,
-    title: "Konaklama & Oda Planlama",
-    text: "Otel blokajı, oda tipi kotaları, refakatçi ve oda arkadaşı eşleştirmeleri, giriş-çıkış tarihleri ve rooming list süreçleri otomatikleşir. Otel ile paylaşılan liste her zaman güncel kalır, iptal ve değişiklikler anında yansır.",
-    points: ["Blokaj ve kota kontrolü", "Otomatik rooming list", "Değişiklik geçmişi"],
-  },
-  {
-    image: transfer,
-    title: "Ulaşım & Transfer Operasyonu",
-    text: "Uçuş bilgileri, karşılama ekipleri, araç kapasiteleri ve transfer saatleri tek bir plan üzerinde birleşir. Sahadaki ekip mobil ekrandan yolcu listesini görür, gecikmeler ve boş koltuklar anında yönetime düşer.",
-    points: ["Uçuş–yolcu eşleştirme", "Araç ve kapasite planı", "Saha ekibi mobil takibi"],
-  },
-  {
-    image: app,
-    title: "Mobil Uygulama & Etkinlik Web Sitesi",
-    text: "Katılımcının cebinde program, konuşmacı bilgileri, kişisel ajanda, anlık bildirim, anket ve oylama; markanızın kimliğiyle tasarlanmış etkinlik web sitesiyle bütünleşir. Tek içerik girişi, tüm kanallarda aynı bilgi.",
-    points: ["Kişisel ajanda ve bildirim", "Anket, oylama ve soru-cevap", "Marka uyumlu etkinlik sitesi"],
-  },
-];
+const IMAGES = [registration, accommodation, transfer, app];
 
 export function Products() {
+  const { t } = useI18n();
+
   return (
     <section id="urunler" className="bg-background py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <p className="eyebrow">Ürünlerimiz</p>
-        <h2 className="mt-4 max-w-3xl text-3xl text-navy sm:text-4xl">
-          Etkinliğin her aşaması için üretilmiş, birbiriyle konuşan modüller.
-        </h2>
+        <p className="eyebrow">{t.products.eyebrow}</p>
+        <h2 className="mt-4 max-w-3xl text-3xl text-navy sm:text-4xl">{t.products.title}</h2>
 
         <div className="mt-16 space-y-16 sm:space-y-24">
-          {PRODUCTS.map((product, index) => (
+          {t.products.items.map((product, index) => (
             <article
               key={product.title}
               className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16"
@@ -53,7 +29,7 @@ export function Products() {
                 )}
               >
                 <img
-                  src={product.image}
+                  src={IMAGES[index]}
                   alt={product.title}
                   loading="lazy"
                   width={1280}

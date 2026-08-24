@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 import {
   Dialog,
   DialogContent,
@@ -7,24 +5,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { KVKK_TITLE, KvkkContent, PRIVACY_TITLE, PrivacyContent, TERMS_TITLE, TermsContent } from "./legal-content";
+import { useI18n } from "@/lib/i18n";
 
 export type LegalKey = "privacy" | "terms" | "kvkk" | null;
 
-const MAP: Record<Exclude<LegalKey, null>, { title: string; content: ReactNode }> = {
-  privacy: { title: PRIVACY_TITLE, content: <PrivacyContent /> },
-  terms: { title: TERMS_TITLE, content: <TermsContent /> },
-  kvkk: { title: KVKK_TITLE, content: <KvkkContent /> },
-};
-
-export function LegalDialog({
-  active,
-  onClose,
-}: {
-  active: LegalKey;
-  onClose: () => void;
-}) {
-  const entry = active ? MAP[active] : null;
+export function LegalDialog({ active, onClose }: { active: LegalKey; onClose: () => void }) {
+  const { t } = useI18n();
+  const entry = active ? t.legal[active] : null;
 
   return (
     <Dialog open={active !== null} onOpenChange={(open) => !open && onClose()}>
@@ -32,10 +19,19 @@ export function LegalDialog({
         <DialogHeader>
           <DialogTitle className="text-xl text-navy">{entry?.title}</DialogTitle>
           <DialogDescription className="text-xs tracking-[0.16em] uppercase">
-            NEXT — Etkinliklerin Dijital Mimarı
+            {t.legal.subtitle}
           </DialogDescription>
         </DialogHeader>
-        {entry?.content}
+        <div className="space-y-3">
+          {entry?.blocks.map((block) => (
+            <div key={block.p} className="space-y-2">
+              {"h" in block && block.h ? (
+                <h3 className="pt-2 text-base font-bold text-navy">{block.h}</h3>
+              ) : null}
+              <p className="text-sm leading-relaxed text-muted-foreground">{block.p}</p>
+            </div>
+          ))}
+        </div>
       </DialogContent>
     </Dialog>
   );
