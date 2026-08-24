@@ -8,30 +8,23 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useI18n } from "@/lib/i18n";
 import { submitQuote } from "@/lib/quote.functions";
 import type { LegalKey } from "./LegalDialog";
-
-const EVENT_TYPES = [
-  "Kongre / Zirve",
-  "Bayi Toplantısı & Gezi",
-  "Kurum İçi Motivasyon",
-  "Lansman",
-  "Eğitim / Workshop",
-  "Diğer",
-];
 
 const initial = {
   name: "",
   company: "",
   email: "",
   phone: "",
-  eventType: EVENT_TYPES[0]!,
+  eventType: "",
   attendees: "",
   eventDate: "",
   message: "",
 };
 
 export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => void }) {
+  const { t } = useI18n();
   const send = useServerFn(submitQuote);
   const [form, setForm] = useState(initial);
   const [kvkk, setKvkk] = useState(false);
@@ -39,6 +32,7 @@ export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => voi
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
+  const eventTypes = t.quote.eventTypes;
   const canSubmit = kvkk && aydinlatma && !loading;
 
   const set = (key: keyof typeof initial) => (value: string) =>
@@ -47,19 +41,26 @@ export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => voi
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (!kvkk || !aydinlatma) {
-      toast.error("Devam etmek için KVKK ve aydınlatma metnini onaylamanız gerekir.");
+      toast.error(t.quote.consentError);
       return;
     }
     setLoading(true);
     try {
-      await send({ data: { ...form, kvkk: true, aydinlatma: true } });
+      await send({
+        data: {
+          ...form,
+          eventType: form.eventType || eventTypes[0]!,
+          kvkk: true,
+          aydinlatma: true,
+        },
+      });
       setDone(true);
       setForm(initial);
       setKvkk(false);
       setAydinlatma(false);
-      toast.success("Talebiniz alındı. Ekibimiz en kısa sürede sizinle iletişime geçecek.");
+      toast.success(t.quote.success);
     } catch {
-      toast.error("Gönderim sırasında bir sorun oluştu. Lütfen bilgileri kontrol edip tekrar deneyin.");
+      toast.error(t.quote.error);
     } finally {
       setLoading(false);
     }
@@ -70,24 +71,18 @@ export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => voi
       <div className="pointer-events-none absolute -left-32 top-0 h-[420px] w-[420px] rounded-full bg-primary/20 blur-3xl" />
       <div className="relative mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
-          <p className="eyebrow">Teklif İste</p>
+          <p className="eyebrow">{t.quote.eyebrow}</p>
           <h2 className="mt-4 text-3xl leading-tight text-white sm:text-4xl">
-            Etkinliğinizi anlatın, <span className="text-brand-gradient">planı biz kuralım.</span>
+            {t.quote.titleLead} <span className="text-brand-gradient">{t.quote.titleAccent}</span>
           </h2>
-          <p className="mt-5 max-w-md text-base leading-relaxed text-white/70">
-            Katılımcı sayısı, tarih ve ihtiyaç duyduğunuz modülleri paylaşın; ekibimiz kapsamı
-            netleştirip size özel bir teklif hazırlasın. Formunuz doğrudan ekibimizin e-posta
-            adresine iletilir.
-          </p>
+          <p className="mt-5 max-w-md text-base leading-relaxed text-white/70">{t.quote.text}</p>
           <ul className="mt-8 space-y-3 text-sm text-white/70">
-            {["24 saat içinde geri dönüş", "Kapsam ve modül bazlı fiyatlama", "Demo ortamında canlı gösterim"].map(
-              (item) => (
-                <li key={item} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-4 w-4 text-primary" />
-                  {item}
-                </li>
-              ),
-            )}
+            {t.quote.bullets.map((item) => (
+              <li key={item} className="flex items-center gap-3">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                {item}
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -95,43 +90,40 @@ export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => voi
           {done ? (
             <div className="flex min-h-[380px] flex-col items-center justify-center text-center">
               <CheckCircle2 className="h-12 w-12 text-primary" />
-              <h3 className="mt-5 text-2xl text-white">Talebiniz bize ulaştı</h3>
-              <p className="mt-3 max-w-sm text-sm text-white/70">
-                En kısa sürede sizinle iletişime geçeceğiz. Acil bir konu varsa
-                info@next.com.tr adresinden bize yazabilirsiniz.
-              </p>
+              <h3 className="mt-5 text-2xl text-white">{t.quote.doneTitle}</h3>
+              <p className="mt-3 max-w-sm text-sm text-white/70">{t.quote.doneText}</p>
               <Button
                 variant="outline"
                 onClick={() => setDone(false)}
                 className="mt-7 rounded-sm border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
               >
-                Yeni talep oluştur
+                {t.quote.doneAgain}
               </Button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Ad Soyad *">
+                <Field label={t.quote.labels.name}>
                   <Input
                     required
                     maxLength={100}
                     value={form.name}
                     onChange={(e) => set("name")(e.target.value)}
                     className="rounded-sm border-white/15 bg-white/5 text-white placeholder:text-white/40"
-                    placeholder="Ad Soyad"
+                    placeholder={t.quote.placeholders.name}
                   />
                 </Field>
-                <Field label="Kurum *">
+                <Field label={t.quote.labels.company}>
                   <Input
                     required
                     maxLength={120}
                     value={form.company}
                     onChange={(e) => set("company")(e.target.value)}
                     className="rounded-sm border-white/15 bg-white/5 text-white placeholder:text-white/40"
-                    placeholder="Kurum adı"
+                    placeholder={t.quote.placeholders.company}
                   />
                 </Field>
-                <Field label="E-posta *">
+                <Field label={t.quote.labels.email}>
                   <Input
                     required
                     type="email"
@@ -139,63 +131,63 @@ export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => voi
                     value={form.email}
                     onChange={(e) => set("email")(e.target.value)}
                     className="rounded-sm border-white/15 bg-white/5 text-white placeholder:text-white/40"
-                    placeholder="ad@kurum.com"
+                    placeholder={t.quote.placeholders.email}
                   />
                 </Field>
-                <Field label="Telefon *">
+                <Field label={t.quote.labels.phone}>
                   <Input
                     required
                     maxLength={30}
                     value={form.phone}
                     onChange={(e) => set("phone")(e.target.value)}
                     className="rounded-sm border-white/15 bg-white/5 text-white placeholder:text-white/40"
-                    placeholder="+90 5xx xxx xx xx"
+                    placeholder={t.quote.placeholders.phone}
                   />
                 </Field>
-                <Field label="Etkinlik Tipi *">
+                <Field label={t.quote.labels.eventType}>
                   <select
                     required
-                    value={form.eventType}
+                    value={form.eventType || eventTypes[0]}
                     onChange={(e) => set("eventType")(e.target.value)}
                     className="h-10 w-full rounded-sm border border-white/15 bg-white/5 px-3 text-sm text-white outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
-                    {EVENT_TYPES.map((type) => (
+                    {eventTypes.map((type) => (
                       <option key={type} value={type} className="text-navy">
                         {type}
                       </option>
                     ))}
                   </select>
                 </Field>
-                <Field label="Katılımcı Sayısı *">
+                <Field label={t.quote.labels.attendees}>
                   <Input
                     required
                     maxLength={40}
                     value={form.attendees}
                     onChange={(e) => set("attendees")(e.target.value)}
                     className="rounded-sm border-white/15 bg-white/5 text-white placeholder:text-white/40"
-                    placeholder="Örn. 850"
+                    placeholder={t.quote.placeholders.attendees}
                   />
                 </Field>
               </div>
 
-              <Field label="Tahmini Tarih">
+              <Field label={t.quote.labels.date}>
                 <Input
                   maxLength={40}
                   value={form.eventDate}
                   onChange={(e) => set("eventDate")(e.target.value)}
                   className="rounded-sm border-white/15 bg-white/5 text-white placeholder:text-white/40"
-                  placeholder="Örn. Kasım 2026"
+                  placeholder={t.quote.placeholders.date}
                 />
               </Field>
 
-              <Field label="İhtiyacınız">
+              <Field label={t.quote.labels.message}>
                 <Textarea
                   rows={4}
                   maxLength={2000}
                   value={form.message}
                   onChange={(e) => set("message")(e.target.value)}
                   className="rounded-sm border-white/15 bg-white/5 text-white placeholder:text-white/40"
-                  placeholder="Kayıt, konaklama, transfer, mobil uygulama..."
+                  placeholder={t.quote.placeholders.message}
                 />
               </Field>
 
@@ -206,9 +198,13 @@ export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => voi
                   onChange={setKvkk}
                   text={
                     <>
-                      Kişisel verilerimin{" "}
-                      <LegalLink onClick={() => onOpenLegal("privacy")}>Gizlilik Politikası</LegalLink>{" "}
-                      kapsamında işlenmesine <strong className="text-white">açık rıza</strong> veriyorum.
+                      {t.quote.consentKvkk[0]}
+                      <LegalLink onClick={() => onOpenLegal("privacy")}>
+                        {t.legal.privacy.title}
+                      </LegalLink>
+                      {t.quote.consentKvkk[1]}
+                      <strong className="text-white">{t.quote.consentKvkk[2]}</strong>
+                      {t.quote.consentKvkk[3]}
                     </>
                   }
                 />
@@ -218,8 +214,9 @@ export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => voi
                   onChange={setAydinlatma}
                   text={
                     <>
-                      <LegalLink onClick={() => onOpenLegal("kvkk")}>KVKK Aydınlatma Metni</LegalLink>'ni
-                      okudum ve anladım.
+                      {t.quote.consentInfo[0]}
+                      <LegalLink onClick={() => onOpenLegal("kvkk")}>{t.legal.kvkk.title}</LegalLink>
+                      {t.quote.consentInfo[1]}
                     </>
                   }
                 />
@@ -231,12 +228,10 @@ export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => voi
                 disabled={!canSubmit}
                 className="w-full rounded-sm text-xs font-bold tracking-[0.18em] uppercase disabled:opacity-40"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Teklif Talebini Gönder"}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t.quote.submit}
               </Button>
               {!kvkk || !aydinlatma ? (
-                <p className="text-center text-xs text-white/50">
-                  Formu gönderebilmek için her iki onayın işaretlenmesi zorunludur.
-                </p>
+                <p className="text-center text-xs text-white/50">{t.quote.required}</p>
               ) : null}
             </form>
           )}
