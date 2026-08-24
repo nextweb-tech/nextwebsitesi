@@ -85,6 +85,16 @@ export function QuoteForm({ onOpenLegal }: { onOpenLegal: (key: LegalKey) => voi
               </li>
             ))}
           </ul>
+          <div className="mt-8 overflow-hidden border border-white/10">
+            <img
+              src={quoteSideImage}
+              alt={t.quote.titleAccent}
+              loading="lazy"
+              width={1024}
+              height={1024}
+              className="aspect-square w-full object-cover transition-transform duration-700 hover:scale-105"
+            />
+          </div>
         </div>
 
         <div className="border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm sm:p-9">
