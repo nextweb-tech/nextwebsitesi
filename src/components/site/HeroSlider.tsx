@@ -82,19 +82,7 @@ export function HeroSlider() {
               className="group rounded-sm px-7 text-xs font-bold tracking-[0.16em] uppercase shadow-[var(--shadow-brand)]"
             >
               {slide.cta}
-              <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() =>
-                document
-                  .getElementById("urunler")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
-              }
-              className="rounded-sm border-white/30 bg-transparent px-7 text-xs font-bold tracking-[0.16em] text-white uppercase hover:bg-white/10 hover:text-white"
-            >
-              {t.hero.secondary}
+            <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
         </div>
